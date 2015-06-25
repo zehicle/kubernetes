@@ -1,0 +1,20 @@
+[Unit]
+Description=ETCD Server
+Documentation=https://github.com/cores/etcd
+
+[Service]
+EnvironmentFile=-/etc/etcd/config
+User=etcd
+ExecStart=/usr/local/bin/etcd \
+		$ETCD_CONFIG_NAME \
+		$ETCD_DATA_DIR \
+		$ETCD_CLUSTER_ARGS \
+		$ETCD_PEER_ARGS \
+		$ETCD_CLIENT_ARGS \
+	    $ETCD_OTHER_ARGS
+Restart=on-failure
+Type=simple
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,54 @@
+#!/bin/bash
+# chkconfig:         2345 90 10
+# description:       Service runner for flannel
+### BEGIN INIT INFO
+# Provides:          flannel
+# Required-Start:    $syslog $network
+# Required-Stop:     $syslog $network
+# Should-Start:      flannel
+# Should-Stop:       flannel
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the flannel server
+# Description:       Manages the flannel server
+### END INIT INFO
+
+PATH="/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+
+if [ -e /etc/flannel/config ] ; then
+   . /etc/flannel/config
+fi
+
+start(){
+    if status; then
+        echo "flannel is already running"
+        return 1
+    fi
+    /usr/local/bin/flanneld \
+        $FLANNEL_ETCD_ENDPOINTS \
+        $FLANNEL_INTERFACE \
+	    $FLANNEL_OTHER_ARGS &
+}
+
+stop() {
+    killall flanneld
+}
+
+restart() {
+    stop; start
+}
+
+status() {
+    pgrep flanneld
+}
+
+case "$1" in
+    start) start;;
+    stop) stop;;
+    status) status;;
+    restart) restart;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+        exit 1
+        ;;
+esac

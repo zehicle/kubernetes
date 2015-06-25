@@ -1,0 +1,4 @@
+source 'https://api.berkshelf.com'
+cookbook 'etcd', path: './etcd/'
+cookbook 'kubernetes', path: './kubernetes/'
+cookbook 'flannel', path: './flannel/'
