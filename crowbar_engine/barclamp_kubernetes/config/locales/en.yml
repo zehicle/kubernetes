@@ -1,0 +1,11 @@
+# Copyright 2015, RackN
+# All Rights Reserved
+
+en:
+  barclamp_kubernetes:
+    node_roles:
+  common:
+    roles:
+      master: "Kubernetes Master"
+      minion: "Kubernetes Minion"
+    attribs:
