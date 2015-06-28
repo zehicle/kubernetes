@@ -4,12 +4,12 @@
 
 include_recipe 'kubernetes::common'
 
-# etcd servers: http://127.0.0.1:4001
 etcd_servers = []
+etcd_client_port = node['etcd']['client-port']
 node['etcd']['nodes'].each do |k,e|
-  etcd_servers << "http://#{e}:4001"
+  etcd_servers << "http://#{e}:#{etcd_client_port}"
 end
-cluster_ip_range='10.254.0.0/16'
+cluster_ip_range=node['kubernetes']['cluster-ip-range']
 
 template '/etc/kubernetes/apiserver' do
   source 'apiserver.erb'
@@ -17,7 +17,9 @@ template '/etc/kubernetes/apiserver' do
   group 'kube'
   mode 0640
   variables :etcd_servers => etcd_servers.join(','),
-            :cluster_ip_range => cluster_ip_range
+            :cluster_ip_range => cluster_ip_range,
+            :master_port => node['kubernetes']['master-port'],
+            :kubelet_port => node['kubernetes']['kubelet-port']
 end
 
 template '/etc/kubernetes/controller-manager' do

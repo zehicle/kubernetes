@@ -20,6 +20,7 @@ roles:
       - etcd
     wants-attribs:
       - etcd-nodes
+      - etcd-client-port
     attribs:
       - name: kubernetes-master-name
         description: 'The name for all kube-apiservers'
@@ -35,6 +36,30 @@ roles:
             =:
               type: str
               pattern: /[0-9a-f:.]*/
+      - name: kubernetes-kubelet-port
+        description: 'Port Kubelets listen on when with this master sets'
+        default: 10250
+        map: 'kubernetes/kubelet-port'
+        schema:
+          type: int
+      - name: kubernetes-master-port
+        description: 'Port masters listen on when with this master sets'
+        default: 8080
+        map: 'kubernetes/master-port'
+        schema:
+          type: int
+      - name: kubernetes-cluster-range
+        description: 'Subnet CIDR address for cluster service addresses.  Should be in flannel network'
+        default: '10.254.0.0/16'
+        map: 'kubernetes/cluster-ip-range'
+        schema:
+          type: str
+      - name: kubernetes-allow-priv
+        description: 'Allow privileged containers'
+        default: false
+        map: 'kubernetes/allow-priv'
+        schema:
+          type: bool
     flags:
       - milestone
       - cluster
@@ -47,6 +72,9 @@ roles:
     wants-attribs:
       - kubernetes-masters
       - kubernetes-master-name
+      - kubernetes-kubelet-port
+      - kubernetes-master-port
+      - kubernetes-allow-priv
     requires:
       - kubernetes-master
       - kubernetes-install
@@ -89,6 +117,7 @@ roles:
       - etcd
     wants-attribs:
       - etcd-nodes
+      - etcd-client-port
   - name: docker
     description: 'Docker Container System'
     jig: script
@@ -108,6 +137,20 @@ roles:
       - name: etcd-cluster-id
         description: "The name of the etcd cluster."
         map: 'etcd/cluster-id'
+        schema:
+          type: str
+      - name: etcd-peer-port
+        default: 2380
+        description: Port that etcd uses to talk amongst peers
+        map: 'etcd/peer-port'
+        schema:
+          type: int
+      - name: etcd-client-port
+        default: 4001
+        description: Port that etcd uses to talk to clients
+        map: 'etcd/client-port'
+        schema:
+          type: int
       - name: etcd-nodes
         description: 'The list of nodes that will act as etcd members'
         map: 'etcd/nodes'

@@ -7,7 +7,7 @@ directory '/etc/flannel'
 # Comma separated list of names.
 members = node['etcd']['nodes']
 
-etcd_client_port=4001
+etcd_client_port=node['etcd']['client-port']
 cluster_members=[]
 members.each do |k, entry|
   cluster_members << "http://#{entry}:#{etcd_client_port}"
@@ -44,8 +44,14 @@ template '/etc/flannel/config' do
 end
 
 if Dir.exists?('/etc/systemd')
-  bash "reload_systemctl" do
-    code "systemctl daemon-reload"
+
+  bash 'reload_flannel' do
+    code <<EOC
+systemctl daemon-reload
+sleep 2
+systemctl enable flannel.service
+systemctl start flannel.service
+EOC
     action :nothing
   end
 
@@ -54,18 +60,17 @@ if Dir.exists?('/etc/systemd')
     owner 'root'
     group 'root'
     source 'flannel.service'
-    notifies :run, "bash[reload_systemctl]",:immediately
-  end
-
-  service 'flannel' do
-    action [:enable, :start]
+    notifies :run, "bash[reload_flannel]",:immediately
   end
 
   bash 'reload_docker' do
     code <<EOC
 systemctl daemon-reload
+sleep 2
 systemctl stop docker.service
-ip link delete docker0
+if ip link show docker0 ; then
+    ip link delete docker0
+fi
 systemctl start docker
 EOC
     action :nothing

@@ -4,11 +4,11 @@
 
 include_recipe 'kubernetes::common'
 
-# Build master list http://127.0.0.1:8080
+master_port = node['kubernetes']['master-port']
 if node['kubernetes']['master']
-  master = "http://#{node['kubernetes']['address']}:8080"
+  master = "http://#{node['kubernetes']['address']}:#{master_port}"
 else
-  master = "http://#{node['kubernetes']['common_name']}:8080"
+  master = "http://#{node['kubernetes']['common_name']}:#{master_port}"
 end
 
 directory '/var/lib/kubelet' do
@@ -21,7 +21,7 @@ template '/etc/kubernetes/kubelet' do
   user 'kube'
   group 'kube'
   mode 0640
-  variables :master => master
+  variables :master => master, :kubelet_port => node['kubernetes']['kubelet-port']
 end
 
 template '/etc/kubernetes/proxy' do
