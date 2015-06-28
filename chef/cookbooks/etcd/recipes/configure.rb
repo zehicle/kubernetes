@@ -21,8 +21,8 @@ end
 # Comma separated list of names.
 members = node['etcd']['nodes']
 
-etcd_peer_port=2380
-etcd_client_port=4001
+etcd_peer_port=node['etcd']['peer-port']
+etcd_client_port=node['etcd']['client-port']
 
 cluster_members=[]
 members.each do |name, addr|
@@ -30,6 +30,8 @@ members.each do |name, addr|
 end
 cluster_members = cluster_members.join(',')
 cluster_token=node['etcd']['cluster-id']
+
+# TODO: One day add security parameters
 
 template '/etc/etcd/config' do
   source 'config.erb'
