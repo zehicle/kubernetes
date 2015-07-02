@@ -35,3 +35,11 @@ Etcd, flannel, and docker will be installed as needed.
 
 FLANNEL CONFIG HERE>!!!
 
+# License
+
+RackN Inc.  All rights reserved.
+
+Experimental and non-commerical use permitted.
+Without express permission for use, RackN assumes no warrenty or liability.
+May be superceded by other commercial RackN licenses.
+
