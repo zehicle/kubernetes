@@ -34,7 +34,7 @@ start(){
 }
 
 stop() {
-    killall etcd
+    killall /usr/local/bin/etcd
 }
 
 restart() {
@@ -42,7 +42,7 @@ restart() {
 }
 
 status() {
-    pgrep etcd
+    pgrep -f /usr/local/bin/etcd
 }
 
 case "$1" in
