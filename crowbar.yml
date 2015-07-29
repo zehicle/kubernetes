@@ -1,0 +1,196 @@
+barclamp:
+  name: kubernetes
+  display: Kubernetes
+  license: "restricted"
+  copyright: "RackN, 2015"
+  os_support:
+    - ubuntu-14.04
+    - ubuntu-15.04
+    - centos-6.6
+    - redhat-6.6
+    - centos-7.1-1503
+    - redhat-7.1
+
+roles:
+  - name: kubernetes-master
+    description: 'Kubernetes Master Node'
+    jig: chef
+    requires:
+      - kubernetes-install
+      - etcd
+    wants-attribs:
+      - etcd-nodes
+      - etcd-client-port
+    attribs:
+      - name: kubernetes-master-name
+        description: 'The name for all kube-apiservers'
+        map: 'kubernetes/common_name'
+        schema:
+          type: str
+      - name: kubernetes-masters
+        description: 'The list of master kubernetes nodes addresses'
+        map: 'kubernetes/masters'
+        schema:
+          type: map
+          mapping:
+            =:
+              type: str
+              pattern: /[0-9a-f:.]*/
+      - name: kubernetes-kubelet-port
+        description: 'Port Kubelets listen on when with this master sets'
+        default: 10250
+        map: 'kubernetes/kubelet-port'
+        schema:
+          type: int
+      - name: kubernetes-master-port
+        description: 'Port masters listen on when with this master sets'
+        default: 8080
+        map: 'kubernetes/master-port'
+        schema:
+          type: int
+      - name: kubernetes-cluster-range
+        description: 'Subnet CIDR address for cluster service addresses.  Should be in flannel network'
+        default: '10.254.0.0/16'
+        map: 'kubernetes/cluster-ip-range'
+        schema:
+          type: str
+      - name: kubernetes-allow-priv
+        description: 'Allow privileged containers'
+        default: false
+        map: 'kubernetes/allow-priv'
+        schema:
+          type: bool
+    flags:
+      - milestone
+      - cluster
+  - name: kubernetes-minion
+    description: 'Kubernetes Minion Node'
+    jig: chef
+    flags:
+      - implicit
+      - milestone
+    wants-attribs:
+      - kubernetes-masters
+      - kubernetes-master-name
+      - kubernetes-kubelet-port
+      - kubernetes-master-port
+      - kubernetes-allow-priv
+    requires:
+      - kubernetes-master
+      - kubernetes-install
+      - flannel
+      - docker
+      - etcd
+  - name: flannel
+    description: 'Flannel'
+    jig: chef
+    flags:
+      - implicit
+    attribs:
+      - name: flannel-subnet-length
+        default: 20
+        description: 'Size of mask for individual flannel nets'
+        map: 'flannel/subnet_size'
+        schema:
+          type: int
+      - name: flannel-network
+        default: '10.0.0.0/8'
+        description: 'Network CIDR'
+        map: 'flannel/network'
+        schema:
+          type: str
+      - name: flannel-network-substart
+        default: '10.10.0.0'
+        description: 'Starting subnet for flannel subnets'
+        map: 'flannel/subnet_start'
+        schema:
+          type: str
+      - name: flannel-network-subend
+        default: '10.100.0.0'
+        map: 'flannel/subnet_end'
+        description: 'Ending subnet for flannel subnets'
+        schema:
+          type: str
+    requires:
+      - flannel-install
+      - etcd-install
+      - etcd
+    wants-attribs:
+      - etcd-nodes
+      - etcd-client-port
+  - name: docker
+    description: 'Docker Container System'
+    jig: script
+    flags:
+      - implicit
+    requires:
+      - crowbar-installed-node
+  - name: etcd
+    description: 'Etcd Cluster'
+    jig: chef
+    flags:
+      - cluster
+      - milestone
+    requires:
+      - etcd-install
+    attribs:
+      - name: etcd-cluster-id
+        description: "The name of the etcd cluster."
+        map: 'etcd/cluster-id'
+        schema:
+          type: str
+      - name: etcd-peer-port
+        default: 2380
+        description: Port that etcd uses to talk amongst peers
+        map: 'etcd/peer-port'
+        schema:
+          type: int
+      - name: etcd-client-port
+        default: 4001
+        description: Port that etcd uses to talk to clients
+        map: 'etcd/client-port'
+        schema:
+          type: int
+      - name: etcd-nodes
+        description: 'The list of nodes that will act as etcd members'
+        map: 'etcd/nodes'
+        schema:
+          type: map
+          mapping:
+            =:
+              type: str
+              pattern: /[0-9a-f:.]*/
+      - name: etcd-initial-members
+        description: "The etcd nodes that must be present to allow the Etcd cluster to start operating"
+        map: "etcd/config/global/mon_initial_members"
+        schema:
+          type: map
+          mapping:
+            =:
+              type: str
+  - name: etcd-install
+    description: 'Etcd Install'
+    jig: chef
+    flags:
+      - implicit
+    requires:
+      - crowbar-installed-node
+  - name: flannel-install
+    description: 'Flannel Install'
+    jig: chef
+    flags:
+      - implicit
+    requires:
+      - crowbar-installed-node
+  - name: kubernetes-install
+    description: 'Kubernetes Install'
+    jig: chef
+    flags:
+      - implicit
+    requires:
+      - crowbar-installed-node
+
+rpms:
+  centos-7.1.1503:
+    repos:
+      - bare centos-virt7-release 20 http://cbs.centos.org/repos/virt7-release/x86_64/os/
