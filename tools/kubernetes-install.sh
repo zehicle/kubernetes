@@ -9,13 +9,13 @@ if [[ $1 = '--develop' ]]; then
   REPO="develop"
 elif [[ $1 = '--master' ]]; then
   TREE="master"
-  REPO="el6"
+  REPO="master"
 elif [[ $1 = '--release' ]]; then
   TREE="release/$2"
   REPO="release/$2"
 else
   TREE="master"
-  REPO="el6"
+  REPO="master"
 fi
 
 # Setup RackN private repo
