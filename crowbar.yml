@@ -11,6 +11,9 @@ barclamp:
     - centos-7.1-1503
     - redhat-7.1
 
+wizard:
+  version: 1
+
 roles:
   - name: kubernetes-master
     description: 'Kubernetes Master Node'
