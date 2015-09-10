@@ -127,7 +127,7 @@ roles:
     flags:
       - implicit
     requires:
-      - crowbar-installed-node
+      - rebar-installed-node
   - name: etcd
     description: 'Etcd Cluster'
     jig: chef
@@ -177,21 +177,21 @@ roles:
     flags:
       - implicit
     requires:
-      - crowbar-installed-node
+      - rebar-installed-node
   - name: flannel-install
     description: 'Flannel Install'
     jig: chef
     flags:
       - implicit
     requires:
-      - crowbar-installed-node
+      - rebar-installed-node
   - name: kubernetes-install
     description: 'Kubernetes Install'
     jig: chef
     flags:
       - implicit
     requires:
-      - crowbar-installed-node
+      - rebar-installed-node
 
 rpms:
   centos-7.1.1503:

@@ -33,9 +33,9 @@ EOF
 cd -
 
 #
-# Make sure the opencrowbar is installed
+# Make sure the digitalrebar is installed
 #
-wget --no-check-certificate -O - https://raw.githubusercontent.com/opencrowbar/core/$TREE/tools/crowbar-install.sh | source /dev/stdin $@
+wget --no-check-certificate -O - https://raw.githubusercontent.com/digitalrebar/core/$TREE/tools/rebar-install.sh | source /dev/stdin $@
 
 # Install code
 yum install -y rackn-kubernetes
