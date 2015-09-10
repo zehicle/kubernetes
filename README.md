@@ -1,22 +1,22 @@
-# Kubernetes Barclamp for OpenCrowbar #
+# Kubernetes Barclamp for DigitalRebar #
 
-A Barclamp for OpenCrowbar that provides the ability to create
+A Barclamp for DigitalRebar that provides the ability to create
 a Kubernetes deployment.
 
 # Install
 
 Read this whole paragraph, please. 
 
-1. The install script takes the same parameters as the core opencrowbar install.sh script.  That can be found [here](https://github.com/opencrowbar/core/blob/develop/doc/deployment-guide/Install-CentOS-RHEL-6.6-AdminNode.md).
+1. The install script takes the same parameters as the core digitalrebar install.sh script.  That can be found [here](https://github.com/digitalrebar/core/blob/develop/doc/deployment-guide/Install-CentOS-RHEL-6.6-AdminNode.md).
 
 2. yum install -y curl 
 
 3. `curl -sL --user "RACKN_ID:RACKN_PSWD"
    https://raw.githubusercontent.com/rackn/kubernetes/develop/tools/kubernetes-install.sh | source /dev/stdin --develop`
 
-3. Optional: You may run other opencrowbar install scripts as needed. 
+3. Optional: You may run other digitalrebar install scripts as needed. 
 
-4. cd /opt/opencrowbar/core/
+4. cd /opt/digitalrebar/core/
 
 5. ./production.sh &lt;FQDN of the admin node&gt;
 
