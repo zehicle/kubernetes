@@ -82,7 +82,7 @@ roles:
       - kubernetes-master
       - kubernetes-install
       - flannel
-      - docker
+      - docker-ready
       - etcd
   - name: flannel
     description: 'Flannel'
@@ -121,13 +121,6 @@ roles:
     wants-attribs:
       - etcd-nodes
       - etcd-client-port
-  - name: docker
-    description: 'Docker Container System'
-    jig: script
-    flags:
-      - implicit
-    requires:
-      - rebar-installed-node
   - name: etcd
     description: 'Etcd Cluster'
     jig: chef
