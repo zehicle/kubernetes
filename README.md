@@ -3,27 +3,13 @@
 A Barclamp for DigitalRebar that provides the ability to create
 a Kubernetes deployment.
 
-# Install
-
-Read this whole paragraph, please. 
-
-1. The install script takes the same parameters as the core digitalrebar install.sh script.  That can be found [here](https://github.com/digitalrebar/core/blob/develop/doc/deployment-guide/Install-CentOS-RHEL-6.6-AdminNode.md).
-
-2. yum install -y curl 
-
-3. `curl -sL --user "RACKN_ID:RACKN_PSWD"
-   https://raw.githubusercontent.com/rackn/kubernetes/develop/tools/kubernetes-install.sh | source /dev/stdin --develop`
-
-3. Optional: You may run other digitalrebar install scripts as needed. 
-
-4. cd /opt/digitalrebar/core/
-
-5. ./production.sh &lt;FQDN of the admin node&gt;
-
 # Use
 
 After the node is discovered, the Kubernetes milestone role can be added to
 the node.  
+
+Remember to edit the docker-prep deployment role and change the docker-port to 0.
+Kuberenetes assumes a local-only socket for docker right now.
 
 A number of masters can be added for redundancy levels.
 Minions can be added as well.
