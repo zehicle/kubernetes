@@ -6,20 +6,29 @@ class BarclampKubernetes::Master < Role
 
   def on_deployment_create(dr)
     default = DnsNameFilter.find_by_name('default')
-    new_template = default.template.split('.', 3)[2]
+    if default
+      new_template = "kube-apiserver.#{default.template.split('.', 3)[2]}"
+    else
+      new_template = 'kube-apiserver.local'
+    end
+
+    DeploymentRole.transaction do
+      name = Attrib.get('kubernetes-master-name',dr)
+      if name.nil? || name == ""
+        Attrib.set('kubernetes-master-name', dr, new_template)
+      else
+        return true
+      end
+    end
 
     DnsNameFilter.find_or_create_by(name: 'kube-apiserver',
                           priority: 1000,
                           matcher: 'node.role has "kubernetes-master"',
-                          template: "kube-apiserver.#{new_template}",
+                          template: new_template,
                           service: default.service)
-
-    DeploymentRole.transaction do
-      Attrib.set('kubernetes-master-name', dr, "kube-apiserver.#{new_template}")
-    end
   end
 
-  def on_todo(nr)
+  def sync_on_todo(nr)
     masters={}
     # GREG: Use the admin network for now.
     nr.role.node_roles.where(:deployment_id => nr.deployment_id).each do |t|
@@ -29,7 +38,7 @@ class BarclampKubernetes::Master < Role
       masters["#{name}"] = IP.coerce(addr).addr
     end
 
-    Attrib.set('kubernetes-masters', nr, masters)
+    Attrib.set_without_save('kubernetes-masters', nr, masters)
   end
 
   def sysdata(nr)

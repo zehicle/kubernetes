@@ -135,6 +135,7 @@ roles:
         map: 'etcd/cluster-id'
         schema:
           type: str
+        default: ""
       - name: etcd-peer-port
         default: 2380
         description: Port that etcd uses to talk amongst peers

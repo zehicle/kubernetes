@@ -6,14 +6,15 @@ class BarclampKubernetes::Etcd < Role
 
   def on_deployment_create(dr)
     DeploymentRole.transaction do
-      Rails.logger.info("#{name}: Merging cluster id into #{dr.deployment.name}")
-      dr.data_update({"etcd" => {"cluster-id" => BarclampKubernetes.genkey}})
-      dr.commit
-      Rails.logger.info("Merged.")
+      cl_id = Attrib.get('etcd-cluster-id', dr)
+      Rails.logger.info("Cluster id: currently = #{cl_id}")
+      if cl_id.nil? || cl_id == ""
+        Attrib.set('etcd-cluster-id', dr, BarclampKubernetes.genkey)
+      end
     end
   end
 
-  def on_todo(nr)
+  def sync_on_todo(nr)
     masters = {}
     # GREG: Use the admin network for now.
     nr.role.node_roles.where(:deployment_id => nr.deployment_id).each do |t|
@@ -23,7 +24,7 @@ class BarclampKubernetes::Etcd < Role
       masters["#{etcd_name}"] = IP.coerce(addr).addr
     end
 
-    Attrib.set('etcd-nodes', nr, masters)
+    Attrib.set_without_save('etcd-nodes', nr, masters)
   end
 
   def sysdata(nr)
