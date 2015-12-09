@@ -13,6 +13,9 @@ barclamp:
 
 wizard:
   version: 1
+  requires:
+    roles:
+      - "docker-ready"
 
 roles:
   - name: kubernetes-master
