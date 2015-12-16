@@ -28,27 +28,27 @@ class BarclampKubernetes::Master < Role
                           service: default.service)
   end
 
-  def sync_on_todo(nr)
-    masters={}
-    # GREG: Use the admin network for now.
-    nr.role.node_roles.where(:deployment_id => nr.deployment_id).each do |t|
-      addr = t.node.addresses(:v4_only).first
-      next unless addr
-      name = t.node.name.split(".")[0]
-      masters["#{name}"] = IP.coerce(addr).addr
-    end
+#  def sync_on_todo(nr)
+#    masters={}
+#    # GREG: Use the admin network for now.
+#    nr.role.node_roles.where(:deployment_id => nr.deployment_id).each do |t|
+#      addr = t.node.addresses(:v4_only).first
+#      next unless addr
+#      name = t.node.name.split(".")[0]
+#      masters["#{name}"] = IP.coerce(addr).addr
+#    end
+#
+#    Attrib.set_without_save('kubernetes-masters', nr, masters)
+#  end
 
-    Attrib.set_without_save('kubernetes-masters', nr, masters)
-  end
-
-  def sysdata(nr)
-    {"kubernetes" => {
-        "master" => true,
-        "name" => nr.node.name.split('.')[0],
-        "address" => IP.coerce(nr.node.addresses(:v4_only).first).addr
-    }
-    }
-  end
+#  def sysdata(nr)
+#    {"kubernetes" => {
+#        "master" => true,
+#        "name" => nr.node.name.split('.')[0],
+#        "address" => IP.coerce(nr.node.addresses(:v4_only).first).addr
+#    }
+#    }
+#  end
 
 end
 

@@ -16,136 +16,65 @@ wizard:
 
 roles:
   - name: kubernetes-master
-    description: 'Kubernetes Master Node'
-    jig: chef
+    description: 'Kubernetes Master'
+    jig: noop
     requires:
-      - kubernetes-install
-      - etcd
-    wants-attribs:
-      - etcd-nodes
-      - etcd-client-port
-    attribs:
-      - name: kubernetes-master-name
-        description: 'The name for all kube-apiservers'
-        map: 'kubernetes/common_name'
-        schema:
-          type: str
-      - name: kubernetes-masters
-        description: 'The list of master kubernetes nodes addresses'
-        map: 'kubernetes/masters'
-        schema:
-          type: map
-          mapping:
-            =:
-              type: str
-              pattern: /[0-9a-f:.]*/
-      - name: kubernetes-kubelet-port
-        description: 'Port Kubelets listen on when with this master sets'
-        default: 10250
-        map: 'kubernetes/kubelet-port'
-        schema:
-          type: int
-      - name: kubernetes-master-port
-        description: 'Port masters listen on when with this master sets'
-        default: 8080
-        map: 'kubernetes/master-port'
-        schema:
-          type: int
-      - name: kubernetes-cluster-range
-        description: 'Subnet CIDR address for cluster service addresses.  Should be in flannel network'
-        default: '10.254.0.0/16'
-        map: 'kubernetes/cluster-ip-range'
-        schema:
-          type: str
-      - name: kubernetes-allow-priv
-        description: 'Allow privileged containers'
-        default: false
-        map: 'kubernetes/allow-priv'
-        schema:
-          type: bool
+      - kubernetes-master-config
     flags:
       - milestone
       - cluster
-  - name: kubernetes-minion
-    description: 'Kubernetes Minion Node'
-    jig: chef
+
+  - name: kubernetes-node
+    description: 'Kubernetes Node'
+    jig: noop
     flags:
       - implicit
       - milestone
-    wants-attribs:
-      - kubernetes-masters
-      - kubernetes-master-name
-      - kubernetes-kubelet-port
-      - kubernetes-master-port
-      - kubernetes-allow-priv
     requires:
       - kubernetes-master
-      - kubernetes-install
-      - flannel
-      - docker-ready
-      - etcd
-  - name: flannel
-    description: 'Flannel'
-    jig: chef
+      - kubernetes-node-config
+
+  - name: kubernetes-gateway
+    description: 'Kubernetes Gateway (Opencontrail)'
+    jig: noop
     flags:
       - implicit
-    attribs:
-      - name: flannel-subnet-length
-        default: 20
-        description: 'Size of mask for individual flannel nets'
-        map: 'flannel/subnet_size'
-        schema:
-          type: int
-      - name: flannel-network
-        default: '10.0.0.0/8'
-        description: 'Network CIDR'
-        map: 'flannel/network'
-        schema:
-          type: str
-      - name: flannel-network-substart
-        default: '10.10.0.0'
-        description: 'Starting subnet for flannel subnets'
-        map: 'flannel/subnet_start'
-        schema:
-          type: str
-      - name: flannel-network-subend
-        default: '10.100.0.0'
-        map: 'flannel/subnet_end'
-        description: 'Ending subnet for flannel subnets'
-        schema:
-          type: str
+      - milestone
     requires:
-      - flannel-install
-      - etcd-install
-      - etcd
-    wants-attribs:
-      - etcd-nodes
-      - etcd-client-port
-  - name: etcd
+      - kubernetes-master
+      - kubernetes-gateway-config
+
+  # GREG: Note this doesn't handle multi-nodes well.
+  # Currently, it relies on hostvars['ansible_hostname'] to build the peer list
+  # Can replace with injection
+  - name: kubernetes-etcd
     description: 'Etcd Cluster'
-    jig: chef
+    jig: ansible-playbook
     flags:
       - cluster
       - milestone
     requires:
-      - etcd-install
+      - rebar-installed-node
+    wants-attribs:
+      - proxy-servers
+      - nics
     attribs:
       - name: etcd-cluster-id
         description: "The name of the etcd cluster."
-        map: 'etcd/cluster-id'
+        map: 'etcd_initial_cluster_token'
         schema:
           type: str
         default: ""
       - name: etcd-peer-port
         default: 2380
         description: Port that etcd uses to talk amongst peers
-        map: 'etcd/peer-port'
+        map: 'etcd_peer_port'
         schema:
           type: int
       - name: etcd-client-port
-        default: 4001
+        default: 2379
         description: Port that etcd uses to talk to clients
-        map: 'etcd/client-port'
+        map: 'etcd_client_port'
         schema:
           type: int
       - name: etcd-nodes
@@ -157,37 +86,309 @@ roles:
             =:
               type: str
               pattern: /[0-9a-f:.]*/
-      - name: etcd-initial-members
-        description: "The etcd nodes that must be present to allow the Etcd cluster to start operating"
-        map: "etcd/config/global/mon_initial_members"
-        schema:
-          type: map
-          mapping:
-            =:
-              type: str
-  - name: etcd-install
-    description: 'Etcd Install'
-    jig: chef
-    flags:
-      - implicit
-    requires:
-      - rebar-installed-node
-  - name: flannel-install
-    description: 'Flannel Install'
-    jig: chef
-    flags:
-      - implicit
-    requires:
-      - rebar-installed-node
-  - name: kubernetes-install
-    description: 'Kubernetes Install'
-    jig: chef
-    flags:
-      - implicit
-    requires:
-      - rebar-installed-node
 
-rpms:
-  centos-7.1.1503:
-    repos:
-      - bare centos-virt7-release 20 http://cbs.centos.org/repos/virt7-release/x86_64/os/
+  - name: kubernetes-config
+    jig: noop
+    requires:
+      - rebar-installed-node
+    flags:
+      - implicit
+    attribs: 
+      - name: kubernetes-source_type
+        description: "The install method for the recipes"
+        map: 'source_type'
+        default: 'packageManager'
+        schema:
+          type: str
+          required: true
+          enum:
+            - packageManager
+            - localBuild
+      - name: kubernetes-cluster_name
+        description: "The name of the cluster"
+        map: 'cluster_name'
+        default: 'cluster.local'
+        schema:
+          type: str
+          required: true
+
+      - name: kubernetes-kube_service_addresses
+        description: "The service addresses for the kube service"
+        map: 'kube_service_addresses'
+        default: '10.254.0.0/16'
+        schema:
+          type: str
+          required: true
+
+      - name: kubernetes-network-category
+        description: "The network category to use for contrail traffic"
+        map: 'opencontrail_network_category'
+        default: 'admin'
+        schema:
+          type: str
+
+      - name: kubernetes-networking
+        description: "The method of networking for the cluster"
+        map: 'networking'
+        default: 'flannel'
+        schema:
+          type: str
+          required: true
+          enum:
+            - flannel
+            - opencontrail
+
+      - name: kubernetes-opencontrail_public_subnet
+        description: "The external network for opencontrail to use"
+        map: 'opencontrail_public_subnet'
+        default: '10.1.4.0/24'
+        schema:
+          type: str
+      - name: kubernetes-opencontrail_private_subnet
+        description: "The internal network for opencontrail to use"
+        map: 'opencontrail_private_subnet'
+        default: '192.168.1.0/24'
+        schema:
+          type: str
+
+      - name: kubernetes-flannel_subnet
+        description: "The flannel subnet for the cluster"
+        map: 'flannel_subnet'
+        default: '172.32.0.0'
+        schema:
+          type: str
+      - name: kubernetes-flannel_prefix
+        description: "The flannel prefix for the cluster"
+        map: 'flannel_prefix'
+        default: 12
+        schema:
+          type: int
+      - name: kubernetes-flannel_host_prefix
+        description: "The flannel host prefix for the cluster"
+        map: 'flannel_host_prefix'
+        default: 24
+        schema:
+          type: int
+
+      - name: kubernetes-cluster_logging
+        description: "The cluster logging toggle to turn off (false) elasticsearch"
+        map: 'cluser_logging'
+        default: true
+        schema:
+          type: bool
+      - name: kubernetes-cluster_monitoring
+        description: "The cluster monitoring toggle to turn off (false) heapster and influxdb"
+        map: 'cluser_monitoring'
+        default: true
+        schema:
+          type: bool
+      - name: kubernetes-kube-ui
+        description: "The kube-ui toggle to turn off (false) the kube-ui addon"
+        map: 'kube-ui'
+        default: true
+        schema:
+          type: bool
+      - name: kubernetes-dns_setup
+        description: "The dns internal server toggle to turn off (false)"
+        map: 'dns_setup'
+        default: true
+        schema:
+          type: bool
+      - name: kubernetes-dns_replicas
+        description: "The number of replicas to use in the cluster"
+        map: 'dns_replicas'
+        default: 1
+        schema:
+          type: int
+
+  - name: kubernetes-master-install
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-master-config
+    jig: ansible-playbook
+    requires:
+      - kubernetes-master-install
+      - kubernetes-etcd
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-node-install
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-node-config
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+      - kubernetes-master
+      - kubernetes-node-install
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-gateway-install
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-gateway-config
+    jig: ansible-playbook
+    requires:
+      - kubernetes-gateway-install
+      - kubernetes-master
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-add-ons
+    jig: ansible-playbook
+    requires:
+      - kubernetes-master
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+
+  - name: kubernetes-network-install
+    description: 'Kubernetes Network Install'
+    jig: noop
+
+  - name: kubernetes-network-config
+    description: 'Kubernetes Network Config'
+    jig: noop
+
+  - name: kubernetes-master-secrets
+    description: 'Kubernetes Master Secrets'
+    jig: noop
+
