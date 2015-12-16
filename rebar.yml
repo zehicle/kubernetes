@@ -15,11 +15,17 @@ wizard:
   version: 1
 
 roles:
+  - name: kubernetes-installed
+    description: 'Kubernetes Installed - abstract'
+    jig: noop
+
   - name: kubernetes-master
     description: 'Kubernetes Master'
     jig: noop
     requires:
-      - kubernetes-master-config
+      - kubernetes-master-install
+      - kubernetes-master-secrets
+      - kubernetes-network-config
     flags:
       - milestone
       - cluster
@@ -28,21 +34,27 @@ roles:
     description: 'Kubernetes Node'
     jig: noop
     flags:
-      - implicit
+      - cluster
       - milestone
     requires:
-      - kubernetes-master
-      - kubernetes-node-config
+      - kubernetes-node-install
+      - kubernetes-network-config
 
   - name: kubernetes-gateway
     description: 'Kubernetes Gateway (Opencontrail)'
     jig: noop
     flags:
-      - implicit
+      - cluster
       - milestone
     requires:
-      - kubernetes-master
-      - kubernetes-gateway-config
+      - kubernetes-gateway-install
+      - kubernetes-network-config
+
+  - name: kubernetes-docker
+    description: 'Kubernetes Docker'
+    jig: ansible-playbook
+    flags:
+      - implicit
 
   # GREG: Note this doesn't handle multi-nodes well.
   # Currently, it relies on hostvars['ansible_hostname'] to build the peer list
@@ -93,7 +105,7 @@ roles:
       - rebar-installed-node
     flags:
       - implicit
-    attribs: 
+    attribs:
       - name: kubernetes-source_type
         description: "The install method for the recipes"
         map: 'source_type'
@@ -203,34 +215,12 @@ roles:
 
   - name: kubernetes-master-install
     jig: ansible-playbook
+    provides:
+      - kubernetes-installed
     requires:
-      - kubernetes-config
-    wants-attribs:
-      - kubernetes-dns_replicas
-      - kubernetes-dns_setup
-      - kubernetes-kube-ui
-      - kubernetes-cluster_monitoring
-      - kubernetes-cluster_logging
-      - kubernetes-flannel_host_prefix
-      - kubernetes-flannel_prefix
-      - kubernetes-flannel_subnet
-      - kubernetes-network-category
-      - kubernetes-opencontrail_private_subnet
-      - kubernetes-opencontrail_public_subnet
-      - kubernetes-networking
-      - kubernetes-kube_service_addresses
-      - kubernetes-cluster_name
-      - kubernetes-source_type
-      - proxy-servers
-      - nics
-    flags:
-      - implicit
-
-  - name: kubernetes-master-config
-    jig: ansible-playbook
-    requires:
-      - kubernetes-master-install
       - kubernetes-etcd
+      - kubernetes-config
+      - kubernetes-network-install
     wants-attribs:
       - kubernetes-dns_replicas
       - kubernetes-dns_setup
@@ -254,35 +244,12 @@ roles:
 
   - name: kubernetes-node-install
     jig: ansible-playbook
-    requires:
-      - kubernetes-config
-    wants-attribs:
-      - kubernetes-dns_replicas
-      - kubernetes-dns_setup
-      - kubernetes-kube-ui
-      - kubernetes-cluster_monitoring
-      - kubernetes-cluster_logging
-      - kubernetes-flannel_host_prefix
-      - kubernetes-flannel_prefix
-      - kubernetes-flannel_subnet
-      - kubernetes-network-category
-      - kubernetes-opencontrail_private_subnet
-      - kubernetes-opencontrail_public_subnet
-      - kubernetes-networking
-      - kubernetes-kube_service_addresses
-      - kubernetes-cluster_name
-      - kubernetes-source_type
-      - proxy-servers
-      - nics
-    flags:
-      - implicit
-
-  - name: kubernetes-node-config
-    jig: ansible-playbook
+    provides:
+      - kubernetes-installed
     requires:
       - kubernetes-config
       - kubernetes-master
-      - kubernetes-node-install
+      - kubernetes-network-install
     wants-attribs:
       - kubernetes-dns_replicas
       - kubernetes-dns_setup
@@ -306,8 +273,11 @@ roles:
 
   - name: kubernetes-gateway-install
     jig: ansible-playbook
+    provides:
+      - kubernetes-installed
     requires:
       - kubernetes-config
+      - kubernetes-master
     wants-attribs:
       - kubernetes-dns_replicas
       - kubernetes-dns_setup
@@ -329,36 +299,18 @@ roles:
     flags:
       - implicit
 
-  - name: kubernetes-gateway-config
-    jig: ansible-playbook
+  - name: kubernetes-complete
+    jig: noop
     requires:
-      - kubernetes-gateway-install
       - kubernetes-master
-    wants-attribs:
-      - kubernetes-dns_replicas
-      - kubernetes-dns_setup
-      - kubernetes-kube-ui
-      - kubernetes-cluster_monitoring
-      - kubernetes-cluster_logging
-      - kubernetes-flannel_host_prefix
-      - kubernetes-flannel_prefix
-      - kubernetes-flannel_subnet
-      - kubernetes-network-category
-      - kubernetes-opencontrail_private_subnet
-      - kubernetes-opencontrail_public_subnet
-      - kubernetes-networking
-      - kubernetes-kube_service_addresses
-      - kubernetes-cluster_name
-      - kubernetes-source_type
-      - proxy-servers
-      - nics
+      - kubernetes-node
     flags:
       - implicit
 
   - name: kubernetes-add-ons
     jig: ansible-playbook
     requires:
-      - kubernetes-master
+      - kubernetes-complete
     wants-attribs:
       - kubernetes-dns_replicas
       - kubernetes-dns_setup
@@ -379,16 +331,123 @@ roles:
       - nics
     flags:
       - implicit
+      - milestone
+
+  - name: kubernetes-test
+    jig: ansible-playbook
+    requires:
+      - kubernetes-add-ons
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
+      - milestone
 
   - name: kubernetes-network-install
     description: 'Kubernetes Network Install'
     jig: noop
+    flags:
+      - implicit
+    requires:
+      - kubernetes-docker
+
+  - name: kubernetes-flannel-install
+    description: 'Kubernetes Flannel Install'
+    jig: ansible-playbook
+    requires:
+      - kubernetes-etcd
+      - kubernetes-config
+      - kubernetes-docker
+    flags:
+      - implicit
+
+  - name: kubernetes-opencontrail-install
+    description: 'Kubernetes Opencontrail Install'
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+      - kubernetes-docker
+    flags:
+      - implicit
+    attribs:
+      - name: opencontrail-cluster-type
+        description: 'The type of opencontrail cluster'
+        map: 'opencontail_cluster_type'
+        default: 'kubernetes'
+        schema:
+          type: str
+          required: true
+          enum:
+            - kubernetes
 
   - name: kubernetes-network-config
     description: 'Kubernetes Network Config'
     jig: noop
+    requires:
+      - kubernetes-config
+      - kubernetes-installed
+    flags:
+      - implicit
+
+  - name: kubernetes-flannel-config
+    description: 'Kubernetes Flannel Config'
+    jig: noop
+    requires:
+      - kubernetes-config
+      - kubernetes-installed
+    flags:
+      - implicit
+
+  - name: kubernetes-opencontrail-config
+    description: 'Kubernetes Opencontrail Config'
+    jig: ansible-playbook
+    requires:
+      - kubernetes-config
+      - kubernetes-installed
+    wants-attribs:
+      - opencontrail-cluster-type
+    flags:
+      - implicit
 
   - name: kubernetes-master-secrets
     description: 'Kubernetes Master Secrets'
-    jig: noop
+    jig: ansible-playbook
+    requires:
+      - kubernetes-master-install
+    wants-attribs:
+      - kubernetes-dns_replicas
+      - kubernetes-dns_setup
+      - kubernetes-kube-ui
+      - kubernetes-cluster_monitoring
+      - kubernetes-cluster_logging
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
+      - kubernetes-network-category
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-networking
+      - kubernetes-kube_service_addresses
+      - kubernetes-cluster_name
+      - kubernetes-source_type
+      - proxy-servers
+      - nics
+    flags:
+      - implicit
 

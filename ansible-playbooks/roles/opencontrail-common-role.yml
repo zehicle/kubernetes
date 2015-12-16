@@ -6,62 +6,41 @@
 # This defines where to get the playbook to cache
 # https, http defines a git repo location
 # otherwise path to playbook (relative to this directory)
-playbook_src_path: https://github.com/rackn/kubernetes-contrib.git
+playbook_src_path: https://github.com/rackn/container-networking-ansible
 
 # Directory in src containing the playbook
-playbook_path: ansible
+playbook_path: .
 
 # The playbook file
-playbook_file: cluster.yml
+playbook_file: .
 
 # Map rebar roles to ansible roles
 # This is only used for dynamic playbooks.
 role_role_map:
+  kubernetes-opencontrail-install:
+    - opencontrail_facts
+    - opencontrail
+  kubernetes-opencontrail-config:
+    - opencontrail_facts
+    - opencontrail_provision
 
 # Map rebar roles to ansible groups
-# This does not have to be complete.
-# It must contain identifying rebar roles that
-# "always" map to a group
 role_group_map:
-  kubernetes-etcd:
-    - etcd
   kubernetes-master-install:
     - masters
   kubernetes-node-install:
     - nodes
   kubernetes-gateway-install:
-    - nodes
     - gateways
 
 # Map rebar roles to ansible tags
 role_tag_map:
-  kubernetes-etcd:
+  kubernetes-opencontrail-install:
     - pre-ansible
     - etcd
-  kubernetes-master-install:
+  kubernetes-opencontrail-config:
     - pre-ansible
-    - masters
-  kubernetes-master-secrets:
-    - pre-ansible
-    - secrets
-  kubernetes-node-install:
-    - pre-ansible
-    - nodes
-  kubernetes-gateway-install:
-    - pre-ansible
-    - nodes
-  kubernetes-flannel-install:
-    - pre-ansible
-    - network-service-install
-  kubernetes-docker:
-    - pre-ansible
-    - docker
-  kubernetes-add-ons:
-    - pre-ansible
-    - addons
-  kubernetes-node:
-    - pre-ansible
-    - nodes
+    - etcd
 
 attribute_map:
   - path: http_proxy
