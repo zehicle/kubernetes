@@ -29,6 +29,13 @@ roles:
     flags:
       - milestone
       - cluster
+    attribs:
+      - name: kubernetes-master-name
+        description: "The name of the master name common FQDN"
+        map: 'kubernetes_master_name'
+        schema:
+          type: str
+        default: ""
 
   - name: kubernetes-node
     description: 'Kubernetes Node'
@@ -105,6 +112,7 @@ roles:
       - rebar-installed-node
     flags:
       - implicit
+      - milestone
     attribs:
       - name: kubernetes-source_type
         description: "The install method for the recipes"
@@ -278,6 +286,7 @@ roles:
     requires:
       - kubernetes-config
       - kubernetes-master
+      - kubernetes-network-install
     wants-attribs:
       - kubernetes-dns_replicas
       - kubernetes-dns_setup
@@ -343,13 +352,6 @@ roles:
       - kubernetes-kube-ui
       - kubernetes-cluster_monitoring
       - kubernetes-cluster_logging
-      - kubernetes-flannel_host_prefix
-      - kubernetes-flannel_prefix
-      - kubernetes-flannel_subnet
-      - kubernetes-network-category
-      - kubernetes-opencontrail_private_subnet
-      - kubernetes-opencontrail_public_subnet
-      - kubernetes-networking
       - kubernetes-kube_service_addresses
       - kubernetes-cluster_name
       - kubernetes-source_type
@@ -376,6 +378,12 @@ roles:
       - kubernetes-docker
     flags:
       - implicit
+    wants-attribs:
+      - kubernetes-networking
+      - kubernetes-network-category
+      - kubernetes-flannel_host_prefix
+      - kubernetes-flannel_prefix
+      - kubernetes-flannel_subnet
 
   - name: kubernetes-opencontrail-install
     description: 'Kubernetes Opencontrail Install'
@@ -395,6 +403,11 @@ roles:
           required: true
           enum:
             - kubernetes
+    wants-attribs:
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-kube_service_addresses
+      - kubernetes-source_type
 
   - name: kubernetes-network-config
     description: 'Kubernetes Network Config'
