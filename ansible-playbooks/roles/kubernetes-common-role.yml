@@ -66,10 +66,10 @@ role_tag_map:
 attribute_map:
   - path: http_proxy
     name: rebar/proxy/servers[0]/url
-    when: rebar/providers/use_proxy == true
+    when: hints/rebar/providers/use_proxy == true
   - path: https_proxy
     name: rebar/proxy/servers[0]/url
-    when: rebar/providers/use_proxy == true
+    when: hints/rebar/providers/use_proxy == true
   - path: etcd_name
     name: etcd/name
   - path: etcd_address
