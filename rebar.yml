@@ -396,7 +396,7 @@ roles:
     attribs:
       - name: opencontrail-cluster-type
         description: 'The type of opencontrail cluster'
-        map: 'opencontail_cluster_type'
+        map: 'opencontrail_cluster_type'
         default: 'kubernetes'
         schema:
           type: str

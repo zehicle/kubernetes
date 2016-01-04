@@ -26,21 +26,21 @@ role_role_map:
 
 # Map rebar roles to ansible groups
 role_group_map:
-  kubernetes-master-install:
+  kubernetes-master:
     - masters
-  kubernetes-node-install:
+  kubernetes-node:
     - nodes
-  kubernetes-gateway-install:
+  kubernetes-gateway:
     - gateways
 
 # Map rebar roles to ansible tags
 role_tag_map:
-  kubernetes-opencontrail-install:
-    - pre-ansible
-    - etcd
-  kubernetes-opencontrail-config:
-    - pre-ansible
-    - etcd
+  kubernetes-master:
+    - masters
+  kubernetes-node:
+    - nodes
+  kubernetes-gateway:
+    - gateways
 
 attribute_map:
   - path: http_proxy
@@ -53,18 +53,18 @@ attribute_map:
     name: etcd/name
   - path: etcd_address
     name: etcd/address
-
-# Not sure why this is needed!  The one below should set it, but it doesn't
-#  - path: opencontrail_build_http_proxy
-#    name: rebar/proxy/servers[0]/url
-#  - path: opencontrail_http_proxy
-#    name: rebar/proxy/servers[0]/url
-#  - path: opencontrail_ipaddr
-#    name: eval:ipaddress(v4_only, contrail-network-category).cidr
-#  - path: opencontrail_interface
-#    name: eval:ipaddress(v4_only, contrail-network-category).ifname
-#  - path: opencontrail_masters_ipaddr
-#    name: eval:nodes_with_role(contrail-master).ipaddress(v4_only, kubernetes-network-category).address
-#  - path: opencontrail_first_masters_ipaddr
-#    name: eval:first_node_with_role(contrail-master).ipaddress(v4_only, kubernetes-network-category).address
+  - path: opencontrail_build_http_proxy
+    name: rebar/proxy/servers[0]/url
+    when: hints/rebar/providers/use_proxy == true
+  - path: opencontrail_http_proxy
+    name: rebar/proxy/servers[0]/url
+    when: hints/rebar/providers/use_proxy == true
+  - path: opencontrail_ipaddr
+    name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
+  - path: opencontrail_interface
+    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
+  - path: opencontrail_masters_ipaddr
+    name: eval:nodes_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
+  - path: opencontrail_first_masters_ipaddr
+    name: eval:first_node_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
 
