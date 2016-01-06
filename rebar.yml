@@ -447,6 +447,12 @@ roles:
       - kubernetes-installed
     wants-attribs:
       - opencontrail-cluster-type
+      - kubernetes-kube_service_addresses
+      - kubernetes-opencontrail_private_subnet
+      - kubernetes-opencontrail_public_subnet
+      - kubernetes-network-category
+      - kubernetes-cluster_name
+      - kubernetes-source_type
       - use-proxy
       - proxy-servers
     flags:
