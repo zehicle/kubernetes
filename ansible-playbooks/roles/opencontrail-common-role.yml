@@ -67,4 +67,8 @@ attribute_map:
     name: eval:nodes_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
   - path: opencontrail_first_masters_ipaddr
     name: eval:first_node_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
+  - path: opencontrail_gateways_ipaddr
+    name: eval:nodes_with_role(kubernetes-gateway).ipaddress(v4_only, kubernetes-network-category).address
+  - path: opencontrail_first_gateways_ipaddr
+    name: eval:first_node_with_role(kubernetes-gateway).ipaddress(v4_only, kubernetes-network-category).address
 
