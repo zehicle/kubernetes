@@ -59,6 +59,8 @@ roles:
     jig: ansible-playbook
     flags:
       - implicit
+    requires:
+      - kubernetes-config
     wants-attribs:
       - proxy-servers
       - use-proxy
