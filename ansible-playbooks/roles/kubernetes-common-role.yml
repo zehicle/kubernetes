@@ -6,13 +6,13 @@
 # This defines where to get the playbook to cache
 # https, http defines a git repo location
 # otherwise path to playbook (relative to this directory)
-playbook_src_path: https://github.com/rackn/kubernetes-contrib.git
+playbook_src_path: https://github.com/rackn/setup-kubernetes.git
 
 # Directory in src containing the playbook
-playbook_path: ansible
+playbook_path: .
 
 # The playbook file
-playbook_file: cluster.yml
+playbook_file: cluster-opencontrail.yml
 
 # Map rebar roles to ansible roles
 # This is only used for dynamic playbooks.
@@ -23,46 +23,27 @@ role_role_map:
 # It must contain identifying rebar roles that
 # "always" map to a group
 role_group_map:
+  kubernetes-downloader:
+    - downloader
   kubernetes-etcd:
     - etcd
-  kubernetes-master-install:
+  kubernetes-master:
+    - kube-master
+    - k8s-cluster
     - masters
-  kubernetes-node-install:
+  kubernetes-node:
+    - kube-node
+    - k8s-cluster
     - nodes
-  kubernetes-gateway-install:
-    - nodes
+  opencontrail-gateway:
+    - kube-node
+    - k8s-cluster
     - gateways
 
 # Map rebar roles to ansible tags
 role_tag_map:
-  kubernetes-etcd:
-    - pre-ansible
-    - etcd
-  kubernetes-master-install:
-    - pre-ansible
-    - masters
-  kubernetes-master-secrets:
-    - pre-ansible
-    - secrets
-  kubernetes-node-install:
-    - pre-ansible
-    - nodes
-  kubernetes-gateway-install:
-    - pre-ansible
-    - nodes
-  kubernetes-flannel-install:
-    - pre-ansible
-    - network-service-install
-  kubernetes-docker:
-    - pre-ansible
-    - docker
-  kubernetes-add-ons:
-    - pre-ansible
-    - addons
-  kubernetes-node:
-    - pre-ansible
-    - nodes
 
+# Global attributes
 attribute_map:
   - path: http_proxy
     name: rebar/proxy/servers[0]/url
@@ -70,10 +51,22 @@ attribute_map:
   - path: https_proxy
     name: rebar/proxy/servers[0]/url
     when: rebar/providers/use_proxy == true
-  - path: etcd_name
-    name: etcd/name
-  - path: etcd_address
-    name: etcd/address
-  - path: flannel_interface_name
-    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
 
+# Per-node map items
+inventory_map:
+ - path: ip
+   name: eval:ipaddress(v4_only, kubernetes-network-category).address
+ - path: opencontrail_ipaddr
+   name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
+ - path: opencontrail_interface
+   name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
+
+# Examples:
+#  - path: flannel_interface_name
+#    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
+#  - path: kube_etcds_ipaddr
+#    name: eval:nodes_with_role(kubernetes-etcd).ipaddress(v4_only, kubernetes-network-category).address
+#  - path: kube_masters_ipaddr
+#    name: eval:nodes_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
+#  - path: kube_first_master_ipaddr
+#    name: eval:first_node_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
