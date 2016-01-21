@@ -178,6 +178,22 @@ roles:
         schema:
           type: bool
           required: true
+ 
+      - name: kubernetes-opencontrail_public_subnet
+        description: "The external network for opencontrail to use"
+        map: 'opencontrail_public_subnet'
+        default: '10.1.4.0/24'
+        schema:
+          type: str
+          required: true
+
+      - name: kubernetes-opencontrail_private_subnet
+        description: "The internal network for opencontrail to use"
+        map: 'opencontrail_private_subnet'
+        default: '192.168.1.0/24'
+        schema:
+          type: str
+          required: true
 
       - name: kubernetes-apiserver_ip
         description: "Default IP of apiserver"

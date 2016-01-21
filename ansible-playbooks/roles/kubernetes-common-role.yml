@@ -51,6 +51,12 @@ attribute_map:
   - path: https_proxy
     name: rebar/proxy/servers[0]/url
     when: rebar/providers/use_proxy == true
+  - path: opencontrail_build_http_proxy
+    name: rebar/proxy/servers[0]/url
+    when: rebar/providers/use_proxy == true
+  - path: opencontrail_http_proxy
+    name: rebar/proxy/servers[0]/url
+    when: rebar/providers/use_proxy == true
 
 # Per-node map items
 inventory_map:
@@ -62,8 +68,6 @@ inventory_map:
    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
 
 # Examples:
-#  - path: flannel_interface_name
-#    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
 #  - path: kube_etcds_ipaddr
 #    name: eval:nodes_with_role(kubernetes-etcd).ipaddress(v4_only, kubernetes-network-category).address
 #  - path: kube_masters_ipaddr
