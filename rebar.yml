@@ -130,7 +130,7 @@ roles:
 
       - name: kubernetes-network-category
         description: "The network category to use for contrail traffic"
-        map: 'opencontrail_network_category'
+        map: 'kubernetes_network_category'
         default: 'admin'
         schema:
           type: str
