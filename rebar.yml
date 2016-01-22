@@ -16,7 +16,6 @@ roles:
     description: 'Kubernetes Master'
     jig: noop
     requires:
-      - kubernetes-downloader
       - kubernetes-etcd
       - rebar-installed-node
     flags:
@@ -51,14 +50,6 @@ roles:
     requires:
       - rebar-installed-node
 
-  - name: kubernetes-downloader
-    description: 'Kubernetes Downloader'
-    jig: noop
-    flags:
-      - milestone
-    requires:
-      - rebar-installed-node
-
   - name: kubernetes-deploy
     description: 'Kubernetes Deploy'
     jig: ansible-playbook
@@ -67,7 +58,6 @@ roles:
     requires:
       - kubernetes-master
       - kubernetes-node
-      - kubernetes-downloader
       - kubernetes-etcd
       - rebar-installed-node
     wants-attribs:
