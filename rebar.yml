@@ -239,13 +239,13 @@ roles:
 
       - name: kubernetes-cluster_logging
         description: "The cluster logging toggle to turn off (false) elasticsearch"
-        map: 'cluser_logging'
+        map: 'cluster_logging'
         default: true
         schema:
           type: bool
       - name: kubernetes-cluster_monitoring
         description: "The cluster monitoring toggle to turn off (false) heapster and influxdb"
-        map: 'cluser_monitoring'
+        map: 'cluster_monitoring'
         default: true
         schema:
           type: bool
@@ -255,12 +255,6 @@ roles:
         default: true
         schema:
           type: bool
-      - name: etcd-cluster-id
-        description: "The name of the etcd cluster."
-        map: 'etcd_initial_cluster_token'
-        schema:
-          type: str
-        default: ""
       - name: etcd-peer-port
         default: 2380
         description: Port that etcd uses to talk amongst peers
