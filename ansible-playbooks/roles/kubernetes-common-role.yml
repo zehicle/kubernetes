@@ -13,6 +13,7 @@ playbook_src_paths:
 playbook_src_setup:
   - cp -r oc/filter* sk
   - cp -r oc/roles/* sk/roles
+  - cp oc/playbooks/cluster-opencontrail.yml sk
 
 # Directory in src containing the playbook
 playbook_path: sk
