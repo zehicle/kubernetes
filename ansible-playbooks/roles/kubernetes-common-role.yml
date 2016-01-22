@@ -73,10 +73,3 @@ inventory_map:
  - path: opencontrail_interface
    name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
 
-# Examples:
-#  - path: kube_etcds_ipaddr
-#    name: eval:nodes_with_role(kubernetes-etcd).ipaddress(v4_only, kubernetes-network-category).address
-#  - path: kube_masters_ipaddr
-#    name: eval:nodes_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
-#  - path: kube_first_master_ipaddr
-#    name: eval:first_node_with_role(kubernetes-master).ipaddress(v4_only, kubernetes-network-category).address
