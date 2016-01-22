@@ -6,10 +6,16 @@
 # This defines where to get the playbook to cache
 # https, http defines a git repo location
 # otherwise path to playbook (relative to this directory)
-playbook_src_path: https://github.com/rackn/setup-kubernetes.git
+playbook_src_paths:
+  sk: https://github.com/rackn/setup-kubernetes.git
+  oc: https://github.com/rackn/container-networking-ansible.git
+
+playbook_src_setup:
+  - cp -r oc/filter* sk
+  - cp -r oc/roles/* sk/roles
 
 # Directory in src containing the playbook
-playbook_path: .
+playbook_path: sk
 
 # The playbook file
 playbook_file: cluster-opencontrail.yml
