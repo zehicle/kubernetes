@@ -109,7 +109,18 @@ roles:
          name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
        - path: opencontrail_interface
          name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
+       - path: flannel_public_ip
+         name: eval:ipaddress(v4_only, kubernetes-network-category).address
+       - path: flannel_interface
+         name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
     attribs:
+      - name: kubernetes-cert_group
+        description: "The certificate group for security"
+        map: 'kube_cert_group'
+        default: 'kube-cert'
+        schema:
+          type: str
+          required: true
       - name: kubernetes-bin_dir
         description: "The local of binary files"
         map: 'bin_dir'
