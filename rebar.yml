@@ -264,6 +264,12 @@ roles:
           sequence:
             - type: str
               pattern: /[0-9a-f:.]*/
+      - name: kubernetes-dns_setup
+        description: "The dns internal server toggle to turn off (false)"
+        map: 'dns_setup'
+        default: true
+        schema:
+          type: bool
       - name: kubernetes-dns_replicas
         description: "The number of replicas to use in the cluster"
         map: 'dns_replicas'
