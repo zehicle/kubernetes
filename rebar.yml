@@ -325,11 +325,10 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-kubedns: https://github.com/ansibl8s/k8s-kubedns.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-kubedns sk/roles/apps/k8s-kubedns
       playbook_path: sk
@@ -364,11 +363,10 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-kube-ui: https://github.com/ansibl8s/k8s-kube-ui.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-kube-ui sk/roles/apps/k8s-kube-ui
       playbook_path: sk
@@ -403,11 +401,10 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-kubedash: https://github.com/ansibl8s/k8s-kubedash.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-kubedash sk/roles/apps/k8s-kubedash
       playbook_path: sk
@@ -442,12 +439,11 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-influxdb: https://github.com/ansibl8s/k8s-influxdb.git
         k8s-heapster: https://github.com/ansibl8s/k8s-heapster.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-influxdb sk/roles/apps/k8s-influxdb
         - ln -s ../../../k8s-heapster sk/roles/apps/k8s-heapster
@@ -484,11 +480,10 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-kube-logstash: https://github.com/ansibl8s/k8s-kube-logstash.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-kube-logstash sk/roles/apps/k8s-kube-logstash
       playbook_path: sk
@@ -523,11 +518,10 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
         k8s-common: https://github.com/ansibl8s/k8s-common.git
         k8s-fabric8: https://github.com/ansibl8s/k8s-fabric8.git
       playbook_src_setup:
-        - rm -rf sk/roles/apps/*
+        - mkdir -p sk/roles/apps
         - ln -s ../../../k8s-common sk/roles/apps/k8s-common
         - ln -s ../../../k8s-fabric8 sk/roles/apps/k8s-fabric8
       playbook_path: sk
