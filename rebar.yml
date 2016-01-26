@@ -63,7 +63,7 @@ roles:
     metadata:
       playbook_scope: deployment
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
+        sk: https://github.com/rackn/setup-kubernetes.git awsify
         oc: https://github.com/rackn/container-networking-ansible.git
       playbook_src_setup:
         - cp -r oc/filter* sk
@@ -105,7 +105,7 @@ roles:
          name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
        - path: opencontrail_interface
          name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
-       - path: flannel_public_ip
+       - path: access_ip
          name: eval:ipaddress(v4_only, kubernetes-network-category).address
        - path: flannel_interface
          name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
