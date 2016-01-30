@@ -79,12 +79,15 @@ roles:
           - kube-master
           - k8s-cluster
           - masters
+          - opencontrail
         kubernetes-node:
           - kube-node
           - k8s-cluster
           - nodes
+          - opencontrail
         opencontrail-gateway:
           - gateways
+          - opencontrail
       attribute_map:
         - path: http_proxy
           name: rebar/proxy/servers[0]/url
