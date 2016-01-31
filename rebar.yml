@@ -105,7 +105,9 @@ roles:
        - path: ip
          name: eval:attrib(node-private-control-address)
        - path: opencontrail_ipaddr
-         name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
+         name: eval:attrib(node-private-control-address)
+#       - path: opencontrail_ipaddr
+#         name: eval:ipaddress(v4_only, kubernetes-network-category).cidr
        - path: opencontrail_interface
          name: eval:ipaddress(v4_only, kubernetes-network-category).ifname
 #       - path: access_ip
