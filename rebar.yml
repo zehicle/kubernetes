@@ -562,6 +562,7 @@ roles:
       - nics
       - use-proxy
       - proxy-servers
+      - kubernetes-networking
     metadata:
       playbook_scope: deployment
       playbook_src_paths:
