@@ -63,10 +63,10 @@ roles:
         oc: https://github.com/rackn/container-networking-ansible.git
       playbook_src_setup:
         - cp -r oc/filter* sk
-        - cp -r oc/roles/* sk/roles/network_plugin
-        - cp -r oc/roles/* sk/roles/network_plugin_provision
+        - cp -r oc/roles/* sk/roles
+        - cp oc/playbooks/cluster-opencontrail.yml sk
       playbook_path: sk
-      playbook_file: cluster.yml
+      playbook_file: cluster-opencontrail.yml
       role_role_map:
       role_group_map:
         kubernetes-etcd:
@@ -82,7 +82,6 @@ roles:
           - nodes
           - opencontrail
         kubernetes-gateway:
-          - k8s-cluster
           - gateways
           - opencontrail
       attribute_map:
