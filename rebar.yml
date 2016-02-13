@@ -171,6 +171,19 @@ roles:
           type: str
           required: true
 
+      - name: kubernetes-cloud-provider
+        description: "Is this kubernetes running in a cloud"
+        map: 'cloud_provider'
+        default: false
+        schema:
+          type: bool
+      - name: kubernetes-cloud-provider-type
+        description: "Which cloud provider is this running in"
+        map: 'cloud_provider_type'
+        default: 'aws'
+        schema:
+          type: str
+
       - name: kubernetes-network-category
         description: "The network category to use for contrail traffic"
         map: 'kubernetes_network_category'
@@ -246,9 +259,14 @@ roles:
       - name: kubernetes-opencontrail_private_subnet
         description: "The internal network for opencontrail to use"
         map: 'opencontrail_private_subnet'
-        default: nil
         schema:
           type: str
+      - name: kubernetes-opencontrail_no_arp
+        description: "True implies that the opencontrail should use the default gw for communication"
+        map: 'opencontrail_no_arp'
+        default: false
+        schema:
+          type: bool
 
       - name: kubernetes-apiserver_ip
         description: "Default IP of apiserver"
