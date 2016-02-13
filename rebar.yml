@@ -259,6 +259,7 @@ roles:
       - name: kubernetes-opencontrail_private_subnet
         description: "The internal network for opencontrail to use"
         map: 'opencontrail_private_subnet'
+        default: ''
         schema:
           type: str
       - name: kubernetes-opencontrail_no_arp
