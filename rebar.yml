@@ -360,7 +360,6 @@ roles:
       - kubernetes-dns_domain
       - kubernetes-dns_server
       - kubernetes-dns_namespace
-      - kubernetes-use_dns_masq
       - kubernetes-cluster_name
       - kubernetes-kube_service_addresses
     metadata:
