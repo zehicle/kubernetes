@@ -333,12 +333,6 @@ roles:
         default: "kube-system"
         schema:
           type: str
-      - name: kubernetes-use_dns_masq
-        description: "Use DNS Masq as an accelerant"
-        map: 'use_dns_masq'
-        default: true
-        schema:
-          type: bool
 
       - name: etcd-peer-port
         default: 2380
