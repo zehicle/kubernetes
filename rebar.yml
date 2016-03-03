@@ -362,8 +362,8 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-kubedns: https://gitlib.com/kubespray-ansibl8s/k8s-kubedns.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-kubedns: https://gitlab.com/kubespray-ansibl8s/k8s-kubedns.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
@@ -400,8 +400,8 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-kube-ui: https://gitlib.com/kubespray-ansibl8s/k8s-kube-ui.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-kube-ui: https://gitlab.com/kubespray-ansibl8s/k8s-kube-ui.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
@@ -438,8 +438,8 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-kubedash: https://gitlib.com/kubespray-ansibl8s/k8s-kubedash.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-kubedash: https://gitlab.com/kubespray-ansibl8s/k8s-kubedash.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
@@ -476,9 +476,9 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-influxdb: https://gitlib.com/kubespray-ansibl8s/k8s-influxdb.git
-        k8s-heapster: https://gitlib.com/kubespray-ansibl8s/k8s-heapster.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-influxdb: https://gitlab.com/kubespray-ansibl8s/k8s-influxdb.git
+        k8s-heapster: https://gitlab.com/kubespray-ansibl8s/k8s-heapster.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
@@ -517,8 +517,8 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-kube-logstash: https://gitlib.com/kubespray-ansibl8s/k8s-kube-logstash.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-kube-logstash: https://gitlab.com/kubespray-ansibl8s/k8s-kube-logstash.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
@@ -555,8 +555,8 @@ roles:
       - kubernetes-kube_service_addresses
     metadata:
       playbook_src_paths:
-        k8s-common: https://gitlib.com/kubespray-ansibl8s/k8s-common.git
-        k8s-fabric8: https://gitlib.com/kubespray-ansibl8s/k8s-fabric8.git
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-fabric8: https://gitlab.com/kubespray-ansibl8s/k8s-fabric8.git
       playbook_src_setup:
         - mkdir -p sk/roles/apps
         - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
