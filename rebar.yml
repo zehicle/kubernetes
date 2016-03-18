@@ -20,6 +20,12 @@ roles:
     requires:
       - kubernetes-etcd
       - rebar-installed-node
+    events:
+      - endpoint: inproc://role:kubernetes-master/on_node_bind
+        selectors:
+          - event: on_node_bind
+            obj_class: role
+            obj_id: kubernetes-master
 
   - name: kubernetes-node
     description: 'Kubernetes Node'
@@ -28,6 +34,12 @@ roles:
       - milestone
     requires:
       - rebar-installed-node
+    events:
+      - endpoint: inproc://role:kubernetes-node/on_node_bind
+        selectors:
+          - event: on_node_bind
+            obj_class: role
+            obj_id: kubernetes-node
 
   - name: kubernetes-gateway
     description: 'Opencontrail Gateway'
@@ -36,7 +48,12 @@ roles:
       - milestone
     requires:
       - rebar-installed-node
-
+    events:
+      - endpoint: inproc://role:kubernetes-gateway/on_node_bind
+        selectors:
+          - event: on_node_bind
+            obj_class: role
+            obj_id: kubernetes-gateway
   - name: kubernetes-etcd
     description: 'Etcd Cluster'
     jig: noop
@@ -44,7 +61,13 @@ roles:
       - milestone
     requires:
       - rebar-installed-node
-
+    events:
+      - endpoint: inproc://role:kubernetes-etcd/on_node_bind
+        selectors:
+          - event: on_node_bind
+            obj_class: role
+            obj_id: kubernetes-etcd
+      
   - name: kubernetes-deploy
     description: 'Kubernetes Deploy'
     jig: ansible-playbook
@@ -56,6 +79,12 @@ roles:
       - nics
       - use-proxy
       - proxy-servers
+    events:
+      - endpoint: inproc://role:kubernetes-deploy/on_node_bind
+        selectors:
+          - event: on_node_bind
+            obj_class: role
+            obj_id: kubernetes-deploy
     metadata:
       playbook_scope: deployment
       playbook_src_paths:
