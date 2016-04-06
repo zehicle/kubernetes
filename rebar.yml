@@ -198,13 +198,19 @@ roles:
           required: true
 
       - name: kubernetes-cloud-provider
-        description: "Is this kubernetes running in a cloud"
+        description: "Is this kubernetes running in a cloud, if true which?"
         map: 'cloud_provider'
-        default: false
+        default: 'aws'
         schema:
-          type: bool
-      - name: kubernetes-cloud-provider-type
-        description: "Which cloud provider is this running in"
+          enum:
+            - aws
+            - gce
+            - openstack
+            - generic
+            - false
+            - true
+        - name: kubernetes-cloud-provider-type
+        description: "Which cloud provider is this running in (depricated for cloud-provider)"
         map: 'cloud_provider_type'
         default: 'aws'
         schema:
@@ -352,6 +358,12 @@ roles:
         description: "The default IP of the internal dns server"
         map: 'dns_server'
         default: "{{ kube_service_addresses|ipaddr('net')|ipaddr(2)|ipaddr('address') }}"
+        schema:
+          type: str
+      - name: kubernetes-skydns_server
+        description: "The default IP of the internal dns container service"
+        map: 'skydns_server'
+        default: "{{ kube_service_addresses|ipaddr('net')|ipaddr(3)|ipaddr('address') }}"
         schema:
           type: str
       - name: kubernetes-dns_namespace
