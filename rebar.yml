@@ -88,7 +88,7 @@ roles:
     metadata:
       playbook_scope: deployment
       playbook_src_paths:
-        sk: https://github.com/rackn/setup-kubernetes.git
+        sk: https://github.com/rackn/kubernetes-kargo.git
         oc: https://github.com/rackn/container-networking-ansible.git
       playbook_src_setup:
         - cp -r oc/filter* sk
