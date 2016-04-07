@@ -202,14 +202,17 @@ roles:
         map: 'cloud_provider'
         default: 'aws'
         schema:
+          type: str
+          required: true
           enum:
-            - aws
-            - gce
-            - openstack
-            - generic
-            - false
-            - true
-        - name: kubernetes-cloud-provider-type
+            - "aws"
+            - "gce"
+            - "openstack"
+            - "generic"
+            - "false"
+            - "true"
+
+      - name: kubernetes-cloud-provider-type
         description: "Which cloud provider is this running in (depricated for cloud-provider)"
         map: 'cloud_provider_type'
         default: 'aws'
