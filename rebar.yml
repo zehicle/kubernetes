@@ -401,6 +401,7 @@ roles:
       - proxy-servers
       - kubernetes-dns_domain
       - kubernetes-dns_server
+      - kubernetes-skydns_server
       - kubernetes-dns_namespace
       - kubernetes-cluster_name
       - kubernetes-kube_service_addresses
