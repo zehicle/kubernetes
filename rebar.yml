@@ -93,6 +93,7 @@ roles:
       playbook_src_setup:
         - cp -r oc/filter* sk
         - cp -r oc/roles/* sk/roles
+        - rm -f sk/ansible.cfg
       playbook_path: sk
       playbook_file: cluster-opencontrail.yml
       role_role_map:
