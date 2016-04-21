@@ -470,6 +470,44 @@ roles:
           name: rebar/proxy/servers[0]/url
           when: rebar/providers/use_proxy == true
 
+  - name: kubernetes-dashboard
+    jig: ansible-playbook
+    requires:
+      - kubernetes-deploy
+    flags:
+      - milestone
+    wants-attribs:
+      - nics
+      - use-proxy
+      - proxy-servers
+      - kubernetes-cluster_name
+      - kubernetes-kube_service_addresses
+    metadata:
+      playbook_src_paths:
+        k8s-common: https://gitlab.com/kubespray-ansibl8s/k8s-common.git
+        k8s-dashboard: https://gitlab.com/galthaus/k8s-dashboard.git
+      playbook_src_setup:
+        - mkdir -p sk/roles/apps
+        - ln -fs ../../../k8s-common sk/roles/apps/k8s-common
+        - ln -fs ../../../k8s-dashboard sk/roles/apps/k8s-dashboard
+      playbook_path: sk
+      playbook_file: .
+      role_role_map:
+        kubernetes-dashboard:
+          - apps/k8s-dashboard
+      role_group_map:
+        kubernetes-dashboard:
+          - kube-master
+        kubernetes-master:
+          - kube-master
+      attribute_map:
+        - path: http_proxy
+          name: rebar/proxy/servers[0]/url
+          when: rebar/providers/use_proxy == true
+        - path: https_proxy
+          name: rebar/proxy/servers[0]/url
+          when: rebar/providers/use_proxy == true
+
   - name: kubernetes-dash
     jig: ansible-playbook
     requires:
